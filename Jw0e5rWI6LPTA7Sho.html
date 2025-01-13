@@ -1,0 +1,202 @@
+<html><head><base href="." />
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+  body {
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Press Start 2P', Arial, sans-serif;
+    position: relative;
+  }
+
+  .retrowave-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    overflow: hidden;
+  }
+
+  .grid {
+    position: absolute;
+    width: 1000%;
+    height: 270%;
+    bottom: -50%;
+    left: -50%;
+    background: 
+      linear-gradient(90deg, rgba(255,0,255,0.5) 1px, transparent 5px) 0 0 / 100px 100%,
+      linear-gradient(rgba(255,0,255,0.5) 1px, transparent 1px) 0 0 / 100% 40px;
+    transform: rotateX(60deg);
+    animation: gridMove 0.5s linear infinite;
+    backface-visibility: hidden;
+  }
+
+  .text {
+    font-size: 120px;
+    font-weight: bold;
+    font-family: Arial Black;
+    position: relative;
+    color: #ff00ff;
+    text-shadow: 2px 2px #00ffff, -2px -2px #ff0000;
+    animation: glitch 2s infinite, shake 2s infinite;
+    z-index: 1;
+  }
+
+  .russian-text {
+    font-size: 48px;
+    margin-top: 40px;
+    color: #00ffff;
+    z-index: 1;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 4px solid #00ffff;
+    width: 0;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .about-panel {
+    margin-top: 40px;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #ff00ff;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 0 20px #ff00ff, 
+                inset 0 0 20px #ff00ff;
+    z-index: 1;
+  }
+
+  .about-title {
+    color: #ff00ff;
+    font-size: 48px;
+    font-family: Arial Black;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px #00ffff;
+    text-align: center;
+  }
+
+  .about-content {
+    color: #fff;
+    font-size: 18px;
+    line-height: 1.6;
+    text-shadow: 1px 1px #ff00ff;
+    text-align: center;
+    font-family: Arial, sans-serif;
+  }
+
+  @keyframes gridMove {
+    0% { transform: rotateX(60deg) translateY(0); }
+    100% { transform: rotateX(60deg) translateY(40px); }
+  }
+
+  @keyframes glitch {
+    0% { text-shadow: 2px 2px #00ffff, -2px -2px #ff0000; }
+    25% { text-shadow: -2px 2px #ff00ff, 2px -2px #00ffff; }
+    50% { text-shadow: 2px -2px #ff0000, -2px 2px #00ffff; }
+    75% { text-shadow: -2px -2px #00ffff, 2px 2px #ff00ff; }
+    100% { text-shadow: 2px 2px #ff0000, -2px -2px #00ffff; }
+  }
+
+  @keyframes typing {
+    from { width: 0 }
+    to { width: var(--typing-width) }
+  }
+
+  @keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #00ffff }
+  }
+
+  @keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    25% { transform: translate(-1px, -2px) rotate(-1deg); }
+    50% { transform: translate(-3px, 0px) rotate(1deg); }
+    75% { transform: translate(3px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -1px) rotate(-1deg); }
+  }
+</style>
+</head>
+<body>
+  <div class="retrowave-bg">
+    <div class="grid"></div>
+  </div>
+  <div class="text" id="mainText">HOMIFORK</div>
+  <div class="russian-text" id="subText"></div>
+  
+  <script>
+    const textConfigs = {
+      mainTexts: ['HOMIFORK'],
+      subTexts: ['Добро пожаловать.', '🔥', 'Борщ с капустой','но не красный','Опасный Поцык','Ты втираешь мне',' какую-то дичь', 'discord.gg/homifork', "Let's have some fun!"]
+    };
+
+    let currentIndex = 0;
+    const mainTextElement = document.getElementById('mainText');
+    const subTextElement = document.getElementById('subText');
+
+    function typeText(element, text, duration) {
+      return new Promise(resolve => {
+        element.textContent = '';
+        element.style.width = '0';
+        
+        const charWidth = 50; // Approximate width per character
+        const fullWidth = text.length * charWidth;
+        element.style.setProperty('--typing-width', `${fullWidth}px`);
+        
+        const intervalTime = duration / text.length;
+        let currentText = '';
+        
+        const addChar = () => {
+          if (currentText.length < text.length) {
+            currentText += text[currentText.length];
+            element.textContent = currentText;
+            element.style.width = `${currentText.length * charWidth}px`;
+            setTimeout(addChar, intervalTime);
+          } else {
+            setTimeout(resolve, 3000);
+          }
+        };
+        
+        addChar();
+      });
+    }
+
+    async function updateTexts() {
+      const text = textConfigs.subTexts[currentIndex];
+      const duration = text.length * 254; // 254ms per character
+      
+      await typeText(subTextElement, text, duration);
+      
+      currentIndex = (currentIndex + 1) % textConfigs.subTexts.length;
+      updateTexts();
+    }
+
+    // Initial call
+    updateTexts();
+
+    setInterval(() => {
+      const texts = document.querySelectorAll('.text');
+      texts.forEach(text => {
+        if (Math.random() > 0.9) {
+          text.style.opacity = Math.random() * 0.5 + 0.5;
+        } else {
+          text.style.opacity = 1;
+        }
+      });
+    }, 100);
+  </script>
+</body></html>
